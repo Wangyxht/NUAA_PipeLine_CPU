@@ -1,10 +1,10 @@
 `include "IUnit.v"
 `include "IF_ID.v"
-`include "RegFile.v"
-`include "ControlUnit.v"
-module PipeLine_CPU(input clk,  //
-                    input rst   //
-                   );
+`include "IDUnit.v"
+module PipeLine_CPU(
+    input clk,  //
+    input rst   //
+    );
 
     //IF段数据
     wire[32-1:0] Instruction_IF;    //IF段指令
@@ -32,5 +32,25 @@ module PipeLine_CPU(input clk,  //
         .Instruction(Instruction_ID),
         .PC_Addr(PC_Addr_ID)
     );
+
+    // Reg/Dec(ID)段单元
+    IDUnit_206 IDUnit(
+        .clk(clk),
+        .busW(32'h0000_0000),
+        .Rw_Wr(5'b00000),
+        .RegWr_Wr(1'b0),
+        .OverFlow_Wr(1'b0),
+        .Jal_Wr(1'b0),
+        .func(Instruction_ID[5:0]),
+        .OP(Instruction_ID[31:26]),
+        .Rs(Instruction_ID[25:21]),
+        .Rt(Instruction_ID[20:16]),
+        .Rd(Instruction_ID[15:11]),
+        .shamt(Instruction_ID[10:6]),
+        .imm16(Instruction_ID[15:0]),
+        .J_Target(Instruction_ID[25:0]),
+        .PC_Addr(PC_Addr_ID)
+    );
+
 
 endmodule
