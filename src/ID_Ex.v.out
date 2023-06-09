@@ -1,0 +1,187 @@
+#! /c/Source/iverilog-install/bin/vvp
+:ivl_version "12.0 (devel)" "(s20150603-1110-g18392a46)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision + 0;
+:vpi_module "D:\iverilog\lib\ivl\system.vpi";
+:vpi_module "D:\iverilog\lib\ivl\vhdl_sys.vpi";
+:vpi_module "D:\iverilog\lib\ivl\vhdl_textio.vpi";
+:vpi_module "D:\iverilog\lib\ivl\v2005_math.vpi";
+:vpi_module "D:\iverilog\lib\ivl\va_math.vpi";
+S_00000198c0ccc040 .scope module, "ID_EX_206" "ID_EX_206" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 1 "clk";
+    .port_info 1 /INPUT 1 "stall";
+    .port_info 2 /INPUT 1 "Branch_ID";
+    .port_info 3 /INPUT 1 "Jump_ID";
+    .port_info 4 /INPUT 1 "RegDst_ID";
+    .port_info 5 /INPUT 1 "ALUSrc_ID";
+    .port_info 6 /INPUT 5 "ALUCtr_ID";
+    .port_info 7 /INPUT 1 "MemToReg_ID";
+    .port_info 8 /INPUT 1 "RegWr_ID";
+    .port_info 9 /INPUT 1 "MemWr_ID";
+    .port_info 10 /INPUT 2 "ExtOp_ID";
+    .port_info 11 /INPUT 1 "Rtype_ID";
+    .port_info 12 /INPUT 1 "Jal_ID";
+    .port_info 13 /INPUT 1 "Rtype_J_ID";
+    .port_info 14 /INPUT 1 "Rtype_L_ID";
+    .port_info 15 /INPUT 1 "WrByte_ID";
+    .port_info 16 /INPUT 2 "LoadByte_ID";
+    .port_info 17 /INPUT 32 "busA_ID";
+    .port_info 18 /INPUT 32 "busB_ID";
+    .port_info 19 /INPUT 32 "PC_Addr_out_ID";
+    .port_info 20 /INPUT 32 "J_Addr_ID";
+    .port_info 21 /INPUT 6 "func_out_ID";
+    .port_info 22 /INPUT 6 "OP_out_ID";
+    .port_info 23 /INPUT 16 "imm16_ID";
+    .port_info 24 /OUTPUT 1 "Branch_Ex";
+    .port_info 25 /OUTPUT 1 "Jump_Ex";
+    .port_info 26 /OUTPUT 1 "RegDst_Ex";
+    .port_info 27 /OUTPUT 1 "ALUSrc_Ex";
+    .port_info 28 /OUTPUT 5 "ALUCtr_Ex";
+    .port_info 29 /OUTPUT 1 "MemToReg_Ex";
+    .port_info 30 /OUTPUT 1 "RegWr_Ex";
+    .port_info 31 /OUTPUT 1 "MemWr_Ex";
+    .port_info 32 /OUTPUT 2 "ExtOp_Ex";
+    .port_info 33 /OUTPUT 1 "Rtype_Ex";
+    .port_info 34 /OUTPUT 1 "Jal_Ex";
+    .port_info 35 /OUTPUT 1 "Rtype_J_Ex";
+    .port_info 36 /OUTPUT 1 "Rtype_L_Ex";
+    .port_info 37 /OUTPUT 1 "WrByte_Ex";
+    .port_info 38 /OUTPUT 2 "LoadByte_Ex";
+    .port_info 39 /OUTPUT 32 "busA_Ex";
+    .port_info 40 /OUTPUT 32 "busB_Ex";
+    .port_info 41 /OUTPUT 32 "PC_Addr_out_Ex";
+    .port_info 42 /OUTPUT 32 "J_Addr_Ex";
+    .port_info 43 /OUTPUT 6 "func_out_Ex";
+    .port_info 44 /OUTPUT 6 "OP_out_Ex";
+    .port_info 45 /OUTPUT 16 "imm16_Ex";
+v00000198c0ce3600_0 .var "ALUCtr_Ex", 4 0;
+o00000198c0d27008 .functor BUFZ 5, C4<zzzzz>; HiZ drive
+v00000198c0ccc350_0 .net "ALUCtr_ID", 4 0, o00000198c0d27008;  0 drivers
+v00000198c0ce3220_0 .var "ALUSrc_Ex", 0 0;
+o00000198c0d27068 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0ce32c0_0 .net "ALUSrc_ID", 0 0, o00000198c0d27068;  0 drivers
+v00000198c0ce3360_0 .var "Branch_Ex", 0 0;
+o00000198c0d270c8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d12970_0 .net "Branch_ID", 0 0, o00000198c0d270c8;  0 drivers
+v00000198c0d12a10_0 .var "ExtOp_Ex", 1 0;
+o00000198c0d27128 .functor BUFZ 2, C4<zz>; HiZ drive
+v00000198c0d12ab0_0 .net "ExtOp_ID", 1 0, o00000198c0d27128;  0 drivers
+v00000198c0d12b50_0 .var "J_Addr_Ex", 31 0;
+o00000198c0d27188 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v00000198c0d12bf0_0 .net "J_Addr_ID", 31 0, o00000198c0d27188;  0 drivers
+v00000198c0d12c90_0 .var "Jal_Ex", 0 0;
+o00000198c0d271e8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d12d30_0 .net "Jal_ID", 0 0, o00000198c0d271e8;  0 drivers
+v00000198c0d12dd0_0 .var "Jump_Ex", 0 0;
+o00000198c0d27248 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d12e70_0 .net "Jump_ID", 0 0, o00000198c0d27248;  0 drivers
+v00000198c0d12f10_0 .var "LoadByte_Ex", 1 0;
+o00000198c0d272a8 .functor BUFZ 2, C4<zz>; HiZ drive
+v00000198c0d133c0_0 .net "LoadByte_ID", 1 0, o00000198c0d272a8;  0 drivers
+v00000198c0d13730_0 .var "MemToReg_Ex", 0 0;
+o00000198c0d27308 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13b90_0 .net "MemToReg_ID", 0 0, o00000198c0d27308;  0 drivers
+v00000198c0d14130_0 .var "MemWr_Ex", 0 0;
+o00000198c0d27368 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d14270_0 .net "MemWr_ID", 0 0, o00000198c0d27368;  0 drivers
+v00000198c0d13690_0 .var "OP_out_Ex", 5 0;
+o00000198c0d273c8 .functor BUFZ 6, C4<zzzzzz>; HiZ drive
+v00000198c0d13f50_0 .net "OP_out_ID", 5 0, o00000198c0d273c8;  0 drivers
+v00000198c0d137d0_0 .var "PC_Addr_out_Ex", 31 0;
+o00000198c0d27428 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v00000198c0d141d0_0 .net "PC_Addr_out_ID", 31 0, o00000198c0d27428;  0 drivers
+v00000198c0d14310_0 .var "RegDst_Ex", 0 0;
+o00000198c0d27488 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13a50_0 .net "RegDst_ID", 0 0, o00000198c0d27488;  0 drivers
+v00000198c0d13870_0 .var "RegWr_Ex", 0 0;
+o00000198c0d274e8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13ff0_0 .net "RegWr_ID", 0 0, o00000198c0d274e8;  0 drivers
+v00000198c0d14090_0 .var "Rtype_Ex", 0 0;
+o00000198c0d27548 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d134b0_0 .net "Rtype_ID", 0 0, o00000198c0d27548;  0 drivers
+v00000198c0d143b0_0 .var "Rtype_J_Ex", 0 0;
+o00000198c0d275a8 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13af0_0 .net "Rtype_J_ID", 0 0, o00000198c0d275a8;  0 drivers
+v00000198c0d13eb0_0 .var "Rtype_L_Ex", 0 0;
+o00000198c0d27608 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13550_0 .net "Rtype_L_ID", 0 0, o00000198c0d27608;  0 drivers
+v00000198c0d135f0_0 .var "WrByte_Ex", 0 0;
+o00000198c0d27668 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13c30_0 .net "WrByte_ID", 0 0, o00000198c0d27668;  0 drivers
+v00000198c0d13910_0 .var "busA_Ex", 31 0;
+o00000198c0d276c8 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v00000198c0d13cd0_0 .net "busA_ID", 31 0, o00000198c0d276c8;  0 drivers
+v00000198c0d13e10_0 .var "busB_Ex", 31 0;
+o00000198c0d27728 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; HiZ drive
+v00000198c0d139b0_0 .net "busB_ID", 31 0, o00000198c0d27728;  0 drivers
+o00000198c0d27758 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d13d70_0 .net "clk", 0 0, o00000198c0d27758;  0 drivers
+v00000198c0d74370_0 .var "func_out_Ex", 5 0;
+o00000198c0d277b8 .functor BUFZ 6, C4<zzzzzz>; HiZ drive
+v00000198c0d754f0_0 .net "func_out_ID", 5 0, o00000198c0d277b8;  0 drivers
+v00000198c0d74f50_0 .var "imm16_Ex", 15 0;
+o00000198c0d27818 .functor BUFZ 16, C4<zzzzzzzzzzzzzzzz>; HiZ drive
+v00000198c0d740f0_0 .net "imm16_ID", 15 0, o00000198c0d27818;  0 drivers
+o00000198c0d27848 .functor BUFZ 1, C4<z>; HiZ drive
+v00000198c0d742d0_0 .net "stall", 0 0, o00000198c0d27848;  0 drivers
+E_00000198c0ccad80 .event posedge, v00000198c0d13d70_0;
+    .scope S_00000198c0ccc040;
+T_0 ;
+    %wait E_00000198c0ccad80;
+    %load/vec4 v00000198c0d742d0_0;
+    %nor/r;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.0, 8;
+    %load/vec4 v00000198c0d12970_0;
+    %assign/vec4 v00000198c0ce3360_0, 0;
+    %load/vec4 v00000198c0d12e70_0;
+    %assign/vec4 v00000198c0d12dd0_0, 0;
+    %load/vec4 v00000198c0d13a50_0;
+    %assign/vec4 v00000198c0d14310_0, 0;
+    %load/vec4 v00000198c0ce32c0_0;
+    %assign/vec4 v00000198c0ce3220_0, 0;
+    %load/vec4 v00000198c0ccc350_0;
+    %assign/vec4 v00000198c0ce3600_0, 0;
+    %load/vec4 v00000198c0d13b90_0;
+    %assign/vec4 v00000198c0d13730_0, 0;
+    %load/vec4 v00000198c0d13a50_0;
+    %assign/vec4 v00000198c0d13870_0, 0;
+    %load/vec4 v00000198c0d14270_0;
+    %assign/vec4 v00000198c0d14130_0, 0;
+    %load/vec4 v00000198c0d12ab0_0;
+    %assign/vec4 v00000198c0d12a10_0, 0;
+    %load/vec4 v00000198c0d134b0_0;
+    %assign/vec4 v00000198c0d14090_0, 0;
+    %load/vec4 v00000198c0d12d30_0;
+    %assign/vec4 v00000198c0d12c90_0, 0;
+    %load/vec4 v00000198c0d13af0_0;
+    %assign/vec4 v00000198c0d143b0_0, 0;
+    %load/vec4 v00000198c0d13550_0;
+    %assign/vec4 v00000198c0d13eb0_0, 0;
+    %load/vec4 v00000198c0d13c30_0;
+    %assign/vec4 v00000198c0d135f0_0, 0;
+    %load/vec4 v00000198c0d133c0_0;
+    %assign/vec4 v00000198c0d12f10_0, 0;
+    %load/vec4 v00000198c0d13cd0_0;
+    %assign/vec4 v00000198c0d13910_0, 0;
+    %load/vec4 v00000198c0d139b0_0;
+    %assign/vec4 v00000198c0d13e10_0, 0;
+    %load/vec4 v00000198c0d141d0_0;
+    %assign/vec4 v00000198c0d137d0_0, 0;
+    %load/vec4 v00000198c0d12bf0_0;
+    %assign/vec4 v00000198c0d12b50_0, 0;
+    %load/vec4 v00000198c0d754f0_0;
+    %assign/vec4 v00000198c0d74370_0, 0;
+    %load/vec4 v00000198c0d13f50_0;
+    %assign/vec4 v00000198c0d13690_0, 0;
+    %load/vec4 v00000198c0d740f0_0;
+    %assign/vec4 v00000198c0d74f50_0, 0;
+T_0.0 ;
+    %jmp T_0;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "ID_Ex.v";

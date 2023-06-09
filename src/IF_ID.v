@@ -2,20 +2,20 @@
 module IF_ID_206(
     input                   clk,              //  
     input                   stall,            //  
-    input[32-1:0]           Instruction_IN,   //          
-    input[32-1:0]           PC_Addr_IN,       //
+    input[32-1:0]           Instruction_IF,   //          
+    input[32-1:0]           PC_Addr_IF,       //
       
-    output[32-1:0]          Instruction,      //          
-    output[32-1:0]          PC_Addr           //  
+    output[32-1:0]          Instruction_ID,      //          
+    output[32-1:0]          PC_Addr_ID           //  
     );
 
-    reg[32-1:0] Instruction;
-    reg[32-1:0] PC_Addr;
+    reg[32-1:0] Instruction_ID;
+    reg[32-1:0] PC_Addr_ID;
 
     always @(posedge clk) begin
         if(!stall) begin
-            Instruction <= Instruction_IN;
-            PC_Addr <= PC_Addr_IN;
+            Instruction_ID <= Instruction_IF;
+            PC_Addr_ID <= PC_Addr_IF;
         end
     end
 endmodule

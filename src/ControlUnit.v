@@ -543,7 +543,7 @@ module Control_Unit206(
                     MemToReg = 1'bX;
                     RegWr    = 0;
                     MemWr    = 0;
-                    ExtOp    = 1'bX;
+                    ExtOp    = 0;
                     Rtype    = 0;
                     Jal      = 0;
                     Rtype_J  = 0;
