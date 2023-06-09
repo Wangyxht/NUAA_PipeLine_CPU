@@ -4,17 +4,21 @@
 `include "ID_Ex.v"
 `include "ExecUnit.v"
 `include "Ex_Mem.v"
+`include "MemUnit.v"
+`include "Mem_Wr.v"
+`include "WrUnit.v"
+
 //流水线CPU模块
 module PipeLine_CPU(
     input clk,  //
     input rst   //
     );
 
-//IF段数据信号
+//IF段信号
     wire[32-1:0]    Instruction_IF;    //IF段指令输出
     wire[32-1:0]    PC_Addr_IF;        //IF段PC值输出
 
-//ID段数据与控制信号
+//ID段信号
     // ID段数据信号
     wire[32-1:0]    Instruction_ID;    //ID段指令输入
     wire[32-1:0]    PC_Addr_ID;        //ID段PC值输入
@@ -84,6 +88,43 @@ module PipeLine_CPU(
     wire[2-1:0]     LoadByte_Ex;   
 
 //Mem段信号
+    //Mem段数据信号
+    wire[32-1:0]       ALU_ans_Mem;   
+    wire[32-1:0]       busB_Mem;   
+    wire[32-1:0]       PC_Addr_Mem; 
+    wire[6-1:0]        OP_Mem;        
+    wire[5-1:0]        Reg_Target_Mem;
+    wire               ZF_Mem;        
+    wire               OF_Mem;        
+    wire               Sign_Mem; 
+    wire[32-1:0]       ALU_ans_out_Mem;
+    wire[5-1:0]        Reg_Target_out_Mem; 
+    wire[32-1:0]       Mem_Data_out_Mem; 
+
+    //Mem段控制信号
+    wire               Branch_Mem;  
+    wire               MemToReg_Mem;
+    wire               RegWr_Mem;   
+    wire               MemWr_Mem;   
+    wire               Jal_Mem;     
+    wire               Rtype_J_Mem; 
+    wire               Rtype_L_Mem; 
+    wire               WrByte_Mem;  
+    wire[2-1:0]        LoadByte_Mem; 
+
+//Wr段信号
+    //Wr段数据信号
+    wire[32-1:0]        ALU_ans_Wr;
+    wire[32-1:0]        Mem_Data_Wr;
+    wire[32-1:0]        PC_Addr_Wr;
+    wire[32-1:0]        busW;
+    wire[5-1:0]         Reg_Target_Wr;
+
+    //Wr段控制信号
+    wire                MemToReg_Wr;
+    wire                RegWr_Wr;
+    wire                Rtype_L_Wr;
+    wire                Jal_Wr;
 
 //流水线CPU各模块
     // IF段流水线取指令单元
@@ -111,11 +152,11 @@ module PipeLine_CPU(
     IDUnit_206 IDUnit(
         .clk(clk),
         //数据输入与输出
-        .busW                   (32'h0000_0000),
-        .Rw_Wr                  (5'b00000),
-        .RegWr_Wr               (1'b0),
+        .busW                   (busW),
+        .Rw_Wr                  (Reg_Target_Wr),
+        .RegWr_Wr               (RegWr_Wr),
         .OverFlow_Wr            (1'b0),
-        .Jal_Wr                 (1'b0),
+        .Jal_Wr                 (Jal_Wr),
         .func_ID                (Instruction_ID[5:0]),
         .OP_ID                  (Instruction_ID[31:26]),
         .Rs_ID                  (Instruction_ID[25:21]),
@@ -185,7 +226,7 @@ module PipeLine_CPU(
         .WrByte_ID              (WrByte_ID),
         .LoadByte_ID            (LoadByte_ID),
 
-        //数据输出
+        //数据信号输出
         .busA_Ex                (busA_Ex),
         .busB_Ex                (busB_Ex),
         .PC_Addr_out_Ex         (PC_Addr_out_Ex),
@@ -242,6 +283,7 @@ module PipeLine_CPU(
         .WrByte_Ex              (WrByte_Ex),
         .LoadByte_Ex            (LoadByte_Ex),
 
+        //数据信号输出
         .ALU_ans_Ex             (ALU_ans_Ex),   
         .busB_out_Ex            (busB_out_Ex),
         .B_Addr_Ex              (B_Addr_Ex),    
@@ -255,14 +297,18 @@ module PipeLine_CPU(
     // Ex - Mem 段寄存器
     Ex_Mem_206 Ex_Mem(
         .clk                    (clk),
+
+        //数据信号输入
         .ALU_ans_Ex             (ALU_ans_Ex),
         .busB_Ex                (busB_out_Ex),
+        .PC_Addr_Ex             (PC_Addr_out_Ex),
         .OP_Ex                  (OP_out_Ex),
         .Reg_Target_Ex          (Reg_Target_Ex),
         .ZF_Ex                  (ZF_Ex),
         .OF_Ex                  (OF_Ex),
         .Sign_Ex                (Sign_Ex),
 
+        //控制信号输入
         .Branch_Ex              (Branch_Ex),
         .MemToReg_Ex            (MemToReg_Ex),
         .RegWr_Ex               (RegWr_Ex),
@@ -271,7 +317,93 @@ module PipeLine_CPU(
         .Rtype_J_Ex             (Rtype_J_Ex),
         .Rtype_L_Ex             (Rtype_L_Ex),
         .WrByte_Ex              (WrByte_Ex),  
-        .LoadByte_Ex            (LoadByte_Ex)
+        .LoadByte_Ex            (LoadByte_Ex),
+
+        //数据信号输出
+        .ALU_ans_Mem            (ALU_ans_Mem),
+        .busB_Mem               (busB_Mem),
+        .PC_Addr_Mem            (PC_Addr_Mem),
+        .OP_Mem                 (OP_Mem),
+        .Reg_Target_Mem         (Reg_Target_Mem),
+        .ZF_Mem                 (ZF_Mem),
+        .OF_Mem                 (OF_Mem),
+        .Sign_Mem               (Sign_Mem),
+
+        //控制信号输出
+        .Branch_Mem             (Branch_Mem),
+        .MemToReg_Mem           (MemToReg_Mem),
+        .RegWr_Mem              (RegWr_Mem),
+        .MemWr_Mem              (MemWr_Mem),
+        .Jal_Mem                (Jal_Mem),
+        .Rtype_J_Mem            (Rtype_J_Mem),
+        .Rtype_L_Mem            (Rtype_L_Mem),
+        .WrByte_Mem             (WrByte_Mem),
+        .LoadByte_Mem           (LoadByte_Mem)
+    );
+
+    MemUnit_206 MemUnit(
+        //数据信号输入
+        .ALU_ans_Mem            (ALU_ans_Mem),    
+        .busB_Mem               (busB_Mem),
+        .OP_Mem                 (OP_Mem),
+        .Reg_Target_Mem         (Reg_Target_Mem),
+        .ZF_Mem                 (ZF_Mem),
+        .OF_Mem                 (OF_Mem),
+        .Sign_Mem               (Sign_Mem),
+
+        //控制信号输入
+        .Branch_Mem             (Branch_Mem),
+        .MemToReg_Mem           (MemToReg_Mem),
+        .RegWr_Mem              (RegWr_Mem),
+        .MemWr_Mem              (MemWr_Mem),
+        .Jal_Mem                (Jal_Mem),
+        .Rtype_J_Mem            (Rtype_J_Mem),
+        .Rtype_L_Mem            (Rtype_L_Mem),
+        .WrByte_Mem             (WrByte_Mem),
+        .LoadByte_Mem           (LoadByte_Mem),
+
+        //数据信号输出
+        .ALU_ans_out_Mem        (ALU_ans_out_Mem),
+        .Reg_Target_out_Mem     (Reg_Target_out_Mem),
+        .Mem_Data_out           (Mem_Data_out_Mem)
+    );
+
+    Mem_Wr_206 Mem_Wr(
+        .clk                    (clk),
+        //数据信号输入
+        .ALU_ans_Mem            (ALU_ans_out_Mem),
+        .Mem_Data_Mem           (Mem_Data_out_Mem),
+        .Reg_Target_Mem         (Reg_Target_out_Mem),
+
+        //控制信号输入
+        .MemToReg_Mem           (MemToReg_Mem),
+        .RegWr_Mem              (RegWr_Mem),
+        .Rtype_L_Mem            (Rtype_L_Mem),
+        .Jal_Mem                (Jal_Mem),
+
+        //数据信号输出
+        .ALU_ans_Wr             (ALU_ans_Wr),
+        .Mem_Data_Wr            (Mem_Data_Wr),
+        .PC_Addr_Wr             (PC_Addr_Wr),
+        .Reg_Target_Wr          (Reg_Target_Wr),
+
+        //控制信号输出
+        .MemToReg_Wr            (MemToReg_Wr),
+        .RegWr_Wr               (RegWr_Wr),
+        .Rtype_L_Wr             (Rtype_L_Wr),
+        .Jal_Wr                 (Jal_Wr)
+    );
+
+    WrUnit_206 WrUint(
+        .ALU_ans_Wr             (ALU_ans_Wr),
+        .Mem_Data_Wr            (Mem_Data_Wr),
+        .PC_Addr_Wr             (PC_Addr_Wr),
+
+        .MemToReg_Wr            (MemToReg_Wr),
+        .Rtype_L_Wr             (Rtype_L_Wr),
+        .Jal_Wr                 (Jal_Wr),
+
+        .busW_Wr                (busW)
     );
 
 endmodule

@@ -1,5 +1,6 @@
 module PC206(input clk,
              input rst,
+             input install,
              input[31:2] Next_I_Addr,
              output[31:2] I_Addr);
     reg[31:2] I_Addr;

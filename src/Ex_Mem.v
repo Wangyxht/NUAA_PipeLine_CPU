@@ -3,6 +3,7 @@ module Ex_Mem_206(
     //数据信号输入
     input[32-1:0]       ALU_ans_Ex,                 //
     input[32-1:0]       busB_Ex,                    //
+    input[32-1:0]       PC_Addr_Ex,                 //
     input[6-1:0]        OP_Ex,                      //
     input[5-1:0]        Reg_Target_Ex,              //
     input               ZF_Ex,                      //
@@ -23,6 +24,7 @@ module Ex_Mem_206(
     //数据信号输出
     output reg[32-1:0]       ALU_ans_Mem,           //
     output reg[32-1:0]       busB_Mem,              //
+    output reg[32-1:0]       PC_Addr_Mem,           //   
     output reg[6-1:0]        OP_Mem,                //
     output reg[5-1:0]        Reg_Target_Mem,        //
     output reg               ZF_Mem,                //
@@ -45,6 +47,7 @@ module Ex_Mem_206(
         //数据信号保存
         ALU_ans_Mem <= ALU_ans_Ex;
         busB_Mem <= busB_Ex;
+        PC_Addr_Mem <= PC_Addr_Ex;
         OP_Mem <= OP_Ex;
         Reg_Target_Mem <= Reg_Target_Ex;
         ZF_Mem <= ZF_Ex;

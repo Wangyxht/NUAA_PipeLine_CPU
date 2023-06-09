@@ -31,6 +31,23 @@ PipeLine_CPU  u_PipeLine_CPU (
     .rst                     ( rst   )
 );
 
+
+integer fd;
+initial 
+begin
+    fd = $fopen("./CPU_Output.txt","w");
+end
+
+integer     i = 0;
+integer     clk_num = 0;
+always @(negedge clk) begin
+    $fdisplay(fd,"-------------------------------------------");
+    $fdisplay(fd,"[clock %2d↓]:", clk_num++);
+    for(i = 0; i <= 31; ++i)begin
+        $fdisplay(fd,"$|Reg%2d| %h |", i,u_PipeLine_CPU.IDUnit.Regfile.Register[i]);
+    end
+end
+
 initial
 begin
     $dumpfile("CPU_Wave.vcd");

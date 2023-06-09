@@ -42,8 +42,7 @@ module ExtUnit_DataPath_206 (input [16-1:0] in,
         end
     end
             
-    assign out = out_t;
-            
+    assign out = out_t;            
 endmodule
 
 module ExtUnit_LB_206 (input [8-1:0] in,

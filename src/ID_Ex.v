@@ -71,7 +71,7 @@ module ID_EX_206(
             ALUSrc_Ex <= ALUSrc_ID;
             ALUCtr_Ex <= ALUCtr_ID;
             MemToReg_Ex <= MemToReg_ID;
-            RegWr_Ex <= RegDst_ID;
+            RegWr_Ex <= RegWr_ID;
             MemWr_Ex <= MemWr_ID;
             ExtOp_Ex <= ExtOp_ID;
             Rtype_Ex <= Rtype_ID;
