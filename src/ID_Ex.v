@@ -32,61 +32,35 @@ module ID_EX_206(
     input[5-1:0]    Rd_ID,              //输入Rd
 
     //控制信号输出
-    output          Branch_Ex,          
-    output          Jump_Ex,            
-    output          RegDst_Ex,          
-    output          ALUSrc_Ex,          
-    output[5-1:0]   ALUCtr_Ex,          
-    output          MemToReg_Ex,        
-    output          RegWr_Ex,           
-    output          MemWr_Ex,           
-    output[2-1:0]   ExtOp_Ex,           
-    output          Rtype_Ex,           
-    output          Jal_Ex,             
-    output          Rtype_J_Ex,         
-    output          Rtype_L_Ex,         
-    output          WrByte_Ex,          
-    output[2-1:0]   LoadByte_Ex,        
+    output reg          Branch_Ex,          
+    output reg          Jump_Ex,            
+    output reg          RegDst_Ex,          
+    output reg          ALUSrc_Ex,          
+    output reg[5-1:0]   ALUCtr_Ex,          
+    output reg          MemToReg_Ex,        
+    output reg          RegWr_Ex,           
+    output reg          MemWr_Ex,           
+    output reg[2-1:0]   ExtOp_Ex,           
+    output reg          Rtype_Ex,           
+    output reg          Jal_Ex,             
+    output reg          Rtype_J_Ex,         
+    output reg          Rtype_L_Ex,         
+    output reg          WrByte_Ex,          
+    output reg[2-1:0]   LoadByte_Ex,        
 
     //数据输出
-    output[32-1:0]  busA_Ex,            
-    output[32-1:0]  busB_Ex,            
-    output[32-1:0]  PC_Addr_out_Ex,         
-    output[32-1:0]  J_Addr_Ex,          
-    output[6-1:0]   func_out_Ex,            
-    output[6-1:0]   OP_out_Ex,          
-    output[16-1:0]  imm16_Ex,   
-    output[5-1:0]   shamt_Ex,
-    output[5-1:0]   Rd_Ex,
-    output[5-1:0]   Rt_Ex       
+    output reg[32-1:0]  busA_Ex,            
+    output reg[32-1:0]  busB_Ex,            
+    output reg[32-1:0]  PC_Addr_out_Ex,         
+    output reg[32-1:0]  J_Addr_Ex,          
+    output reg[6-1:0]   func_out_Ex,            
+    output reg[6-1:0]   OP_out_Ex,          
+    output reg[16-1:0]  imm16_Ex,   
+    output reg[5-1:0]   shamt_Ex,
+    output reg[5-1:0]   Rd_Ex,
+    output reg[5-1:0]   Rt_Ex       
 );
 
-    reg             Branch_Ex;         
-    reg             Jump_Ex;           
-    reg             RegDst_Ex;         
-    reg             ALUSrc_Ex;         
-    reg[5-1:0]      ALUCtr_Ex;         
-    reg             MemToReg_Ex;       
-    reg             RegWr_Ex;          
-    reg             MemWr_Ex;          
-    reg[2-1:0]      ExtOp_Ex;          
-    reg             Rtype_Ex;          
-    reg             Jal_Ex;            
-    reg             Rtype_J_Ex;        
-    reg             Rtype_L_Ex;        
-    reg             WrByte_Ex;         
-    reg[2-1:0]      LoadByte_Ex;       
-
-    reg[32-1:0]     busA_Ex;         
-    reg[32-1:0]     busB_Ex;         
-    reg[32-1:0]     PC_Addr_out_Ex;  
-    reg[32-1:0]     J_Addr_Ex;       
-    reg[6-1:0]      func_out_Ex;     
-    reg[6-1:0]      OP_out_Ex;       
-    reg[16-1:0]     imm16_Ex; 
-    reg[5-1:0]      shamt_Ex; 
-    reg[5-1:0]      Rd_Ex;
-    reg[5-1:0]      Rt_Ex;      
 
     always @(posedge clk) begin
         if(!stall) begin
@@ -117,7 +91,7 @@ module ID_EX_206(
             OP_out_Ex <= OP_out_ID;
             imm16_Ex <= imm16_ID;
             Rd_Ex <= Rd_ID;
-            Rt_Ex <= Rt_Ex;
+            Rt_Ex <= Rt_ID;
 
         end
     end 

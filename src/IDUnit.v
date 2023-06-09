@@ -29,6 +29,8 @@ module IDUnit_206(
     output[6-1:0]       OP_out_ID,          //输出OP域
     output[16-1:0]      imm16_out_ID,       //输出imm16
     output[5-1:0]       shamt_out_ID,       //输出shamt
+    output[5-1:0]       Rd_out_ID,         
+    output[5-1:0]       Rt_out_ID,
 
     //输出控制信号
     output              Branch_ID,
@@ -54,6 +56,8 @@ module IDUnit_206(
     assign OP_out_ID = OP_ID;
     assign imm16_out_ID = imm16_ID;
     assign shamt_out_ID = shamt_ID;
+    assign Rd_out_ID = Rd_ID;
+    assign Rt_out_ID = Rt_ID;
 
     //寄存器组
     Regfile206 Regfile(
