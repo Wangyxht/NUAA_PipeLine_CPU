@@ -31,6 +31,7 @@ module IDUnit_206(
     output[5-1:0]       shamt_out_ID,       //输出shamt
     output[5-1:0]       Rd_out_ID,         
     output[5-1:0]       Rt_out_ID,
+    output[5-1:0]       Rs_out_ID,
 
     //输出控制信号
     output              Branch_ID,
@@ -58,39 +59,40 @@ module IDUnit_206(
     assign shamt_out_ID = shamt_ID;
     assign Rd_out_ID = Rd_ID;
     assign Rt_out_ID = Rt_ID;
+    assign Rs_out_ID = Rs_ID;
 
     //寄存器组
     Regfile206 Regfile(
-        .clk(clk),
-        .Rw(Rw_Wr),
-        .Ra(Rs_ID),
-        .Rb(Rt_ID),
-        .WrEn(~OverFlow_Wr & RegWr_Wr),
-        .Jal(Jal_Wr),
-        .busA(busA_ID),
-        .busB(busB_ID),
-        .busW(busW)
+        .clk        (clk),
+        .Rw         (Rw_Wr),
+        .Ra         (Rs_ID),
+        .Rb         (Rt_ID),
+        .WrEn       (~OverFlow_Wr & RegWr_Wr),
+        .Jal        (Jal_Wr),
+        .busA       (busA_ID),
+        .busB       (busB_ID),
+        .busW       (busW)
     );
     
     //指令控制器
     Control_Unit206 ControlUnit(
-        .OP(OP_ID),
-        .func(func_ID),
-        .Branch(Branch_ID),
-        .Jump(Jump_ID),
-        .RegDst(RegDst_ID),
-        .ALUSrc(ALUSrc_ID),
-        .ALUCtr(ALUCtr_ID[5-1:0]),
-        .MemToReg(MemToReg_ID),
-        .RegWr(RegWr_ID),
-        .MemWr(MemWr_ID),
-        .ExtOp(ExtOp_ID),
-        .Rtype(Rtype_ID),
-        .Jal(Jal_ID),
-        .Rtype_J(Rtype_J_ID),
-        .Rtype_L(Rtype_L_ID),
-        .WrByte(WrByte_ID),
-        .LoadByte(LoadByte_ID)        
+        .OP         (OP_ID),
+        .func       (func_ID),
+        .Branch     (Branch_ID),
+        .Jump       (Jump_ID),
+        .RegDst     (RegDst_ID),
+        .ALUSrc     (ALUSrc_ID),
+        .ALUCtr     (ALUCtr_ID[5-1:0]),
+        .MemToReg   (MemToReg_ID),
+        .RegWr      (RegWr_ID),
+        .MemWr      (MemWr_ID),
+        .ExtOp      (ExtOp_ID),
+        .Rtype      (Rtype_ID),
+        .Jal        (Jal_ID),
+        .Rtype_J    (Rtype_J_ID),
+        .Rtype_L    (Rtype_L_ID),
+        .WrByte     (WrByte_ID),
+        .LoadByte   (LoadByte_ID)        
     );
     
 endmodule

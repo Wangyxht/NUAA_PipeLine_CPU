@@ -30,6 +30,7 @@ module ID_EX_206(
     input[5-1:0]    shamt_ID,           //输入shamt
     input[5-1:0]    Rt_ID,              //输入Rt
     input[5-1:0]    Rd_ID,              //输入Rd
+    input[5-1:0]    Rs_ID,              //输入Rs
 
     //控制信号输出
     output reg          Branch_Ex,          
@@ -58,7 +59,8 @@ module ID_EX_206(
     output reg[16-1:0]  imm16_Ex,   
     output reg[5-1:0]   shamt_Ex,
     output reg[5-1:0]   Rd_Ex,
-    output reg[5-1:0]   Rt_Ex       
+    output reg[5-1:0]   Rt_Ex,
+    output reg[5-1:0]   Rs_Ex       
 );
 
 
@@ -92,6 +94,7 @@ module ID_EX_206(
             imm16_Ex <= imm16_ID;
             Rd_Ex <= Rd_ID;
             Rt_Ex <= Rt_ID;
+            Rs_Ex <= Rs_ID;
 
         end
     end 

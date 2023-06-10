@@ -36,8 +36,10 @@ module Exec_Unit_206(
     input[2-1:0]        ALUSrcB_ByPassing,  //转发控制信号（B端口）    
     
     //转发数据输入(旁路)
-    input[32-1:0]       Ex_Mem_ByPassing,   //Ex/Mem段寄存器的转发数据        
-    input[32-1:0]       Mem_Wr_ByPassing,   //Mem/Wr段寄存器转发的数据
+    input[32-1:0]       Ex_Mem_ByPassing_A,   //Ex/Mem段寄存器的转发数据        
+    input[32-1:0]       Mem_Wr_ByPassing_A,   //Mem/Wr段寄存器转发的数据
+    input[32-1:0]       Ex_Mem_ByPassing_B,   //Ex/Mem段寄存器的转发数据        
+    input[32-1:0]       Mem_Wr_ByPassing_B,   //Mem/Wr段寄存器转发的数据
 
     //Ex段数据信号输出
     output[32-1:0]      ALU_ans_Ex,         //
@@ -77,24 +79,24 @@ module Exec_Unit_206(
         .out                (imm_16_Ext)                    //
     );
 
-    //ALU A输入数据选择器（考虑旁路）
-    MUX_4_206 MUX_ALUSrc_A(
-        .A                  (),                             // 
-        .B                  (),                             //
-        .C                  (imm_16_Ext),                   //
-        .D                  (busA_Ex),                      //
-        .S                  ({1'b0,ALUSrc_Ex}),             //
-        .Y                  (ALU_input_A)                   //
-    );
-
     //ALU B输入数据选择器（考虑旁路）
     MUX_4_206 MUX_ALUSrc_B(
-        .A                  (),
-        .B                  (),
+        .A                  (Mem_Wr_ByPassing_B),           // 
+        .B                  (Ex_Mem_ByPassing_B),           //
+        .C                  (imm_16_Ext),                   //
+        .D                  (busB_Ex),                      //
+        .S                  (ALUSrcB_ByPassing),            //
+        .Y                  (ALU_input_B)                   //
+    );
+
+    //ALU A输入数据选择器（考虑旁路）
+    MUX_4_206 MUX_ALUSrc_A(
+        .A                  (Mem_Wr_ByPassing_A),
+        .B                  (Ex_Mem_ByPassing_A),
         .C                  (),
-        .D                  (busB_Ex),
-        .S                  (2'b00),
-        .Y                  (ALU_input_B)
+        .D                  (busA_Ex),
+        .S                  (ALUSrcA_ByPassing),
+        .Y                  (ALU_input_A)
     );
 
 endmodule

@@ -43,7 +43,8 @@ integer     clk_num = 0;
 always @(negedge clk) begin
     $fdisplay(fd,"-------------------------------------------");
     $fdisplay(fd,"[clock %2d↓]:", clk_num++);
-    for(i = 0; i <= 31; ++i)begin
+    for(i = 0; i <= 31; ++i)    
+    begin
         $fdisplay(fd,"$|Reg%2d| %h |", i,u_PipeLine_CPU.IDUnit.Regfile.Register[i]);
     end
 end

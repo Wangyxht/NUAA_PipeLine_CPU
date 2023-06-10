@@ -7,11 +7,12 @@
 `include "MemUnit.v"
 `include "Mem_Wr.v"
 `include "WrUnit.v"
+`include "ForwardingUnit.v"
 
 //流水线CPU模块
 module PipeLine_CPU(
-    input clk,  //
-    input rst   //
+    input           clk,                //
+    input           rst                 //
     );
 
 //IF段信号
@@ -32,6 +33,7 @@ module PipeLine_CPU(
     wire[5-1:0]     shamt_ID;          //ID段shamt输出
     wire[5-1:0]     Rd_out_ID;
     wire[5-1:0]     Rt_out_ID;
+    wire[5-1:0]     Rs_out_ID;
 
     // ID段控制信号
     wire            Branch_ID;          
@@ -64,6 +66,7 @@ module PipeLine_CPU(
     wire[5-1:0]     shamt_Ex; 
     wire[5-1:0]     Rt_Ex;
     wire[5-1:0]     Rd_Ex;
+    wire[5-1:0]     Rs_Ex;
     wire[32-1:0]    ALU_ans_Ex;
     wire[32-1:0]    B_Addr_Ex;
     wire[5-1:0]     Reg_Target_Ex;
@@ -126,6 +129,9 @@ module PipeLine_CPU(
     wire                Rtype_L_Wr;
     wire                Jal_Wr;
 
+//转发数据与控制信号
+    wire[2-1:0]     ALUSrcA_ByPassing;  //转发控制信号（A端口）
+    wire[2-1:0]     ALUSrcB_ByPassing;  //转发控制信号（B端口）   
 //流水线CPU各模块
     // IF段流水线取指令单元
     IUnit206 IUnit(
@@ -175,6 +181,7 @@ module PipeLine_CPU(
         .shamt_out_ID           (shamt_ID),
         .Rd_out_ID              (Rd_out_ID),
         .Rt_out_ID              (Rt_out_ID),
+        .Rs_out_ID              (Rs_out_ID),
 
         //控制信号输出
         .Branch_ID              (Branch_ID),
@@ -208,6 +215,7 @@ module PipeLine_CPU(
         .shamt_ID               (shamt_ID),
         .Rd_ID                  (Rd_out_ID),
         .Rt_ID                  (Rt_out_ID),
+        .Rs_ID                  (Rs_out_ID),
 
         //控制信号输入
         .Branch_ID              (Branch_ID),
@@ -236,6 +244,7 @@ module PipeLine_CPU(
         .shamt_Ex               (shamt_Ex),
         .Rd_Ex                  (Rd_Ex),
         .Rt_Ex                  (Rt_Ex),
+        .Rs_Ex                  (Rs_Ex),
 
         //控制信号输出
         .Branch_Ex              (Branch_Ex),
@@ -254,6 +263,7 @@ module PipeLine_CPU(
         .WrByte_Ex              (WrByte_Ex),
         .LoadByte_Ex            (LoadByte_Ex)
     );
+
     // Exec(Ex)段单元
     Exec_Unit_206 ExecUnit(
         // 数据信号输入
@@ -291,7 +301,16 @@ module PipeLine_CPU(
         .Reg_Target_Ex          (Reg_Target_Ex),
         .ZF_Ex                  (ZF_Ex),
         .OF_Ex                  (OF_Ex),
-        .Sign_Ex                (Sign_Ex)
+        .Sign_Ex                (Sign_Ex),
+
+        //转发信号输入
+        .ALUSrcA_ByPassing      (ALUSrcA_ByPassing),
+        .ALUSrcB_ByPassing      (ALUSrcB_ByPassing),
+
+        .Ex_Mem_ByPassing_A     (ALU_ans_Mem),
+        .Mem_Wr_ByPassing_A     (busW),
+        .Ex_Mem_ByPassing_B     (ALU_ans_Mem),
+        .Mem_Wr_ByPassing_B     (busW)
     );
 
     // Ex - Mem 段寄存器
@@ -341,6 +360,7 @@ module PipeLine_CPU(
         .LoadByte_Mem           (LoadByte_Mem)
     );
 
+    // Mem 段单元
     MemUnit_206 MemUnit(
         //数据信号输入
         .ALU_ans_Mem            (ALU_ans_Mem),    
@@ -368,6 +388,7 @@ module PipeLine_CPU(
         .Mem_Data_out           (Mem_Data_out_Mem)
     );
 
+    // Mem - Wr 段寄存器
     Mem_Wr_206 Mem_Wr(
         .clk                    (clk),
         //数据信号输入
@@ -394,6 +415,7 @@ module PipeLine_CPU(
         .Jal_Wr                 (Jal_Wr)
     );
 
+    //Wr 段单元
     WrUnit_206 WrUint(
         .ALU_ans_Wr             (ALU_ans_Wr),
         .Mem_Data_Wr            (Mem_Data_Wr),
@@ -405,5 +427,22 @@ module PipeLine_CPU(
 
         .busW_Wr                (busW)
     );
+
+    //数据转发检测单元
+    Forwording_Unit_206 ForwardingUnit(
+        .RegTarget_EX_Mem       (Reg_Target_Mem),
+        .RegTarget_Mem_Wr       (Reg_Target_Wr),
+        .Rs_ID_EX               (Rs_Ex),
+        .Rt_ID_EX               (Rt_Ex),
+
+        .RegWr_Ex_Mem           (RegWr_Mem),
+        .RegWr_Mem_Wr           (RegWr_Wr),
+        .ALUSrc_ID_Ex           (ALUSrc_Ex),
+
+        .ALU_Src_A              (ALUSrcA_ByPassing),
+        .ALU_Src_B              (ALUSrcB_ByPassing)
+    );
+
+
 
 endmodule
