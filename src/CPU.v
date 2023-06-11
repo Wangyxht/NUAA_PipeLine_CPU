@@ -132,6 +132,8 @@ module PipeLine_CPU(
 //转发数据与控制信号
     wire[2-1:0]     ALUSrcA_ByPassing;  //转发控制信号（A端口）
     wire[2-1:0]     ALUSrcB_ByPassing;  //转发控制信号（B端口）   
+    wire[2-1:0]     busBSrc_ByPassing;  //转发控制信号（busB端口）
+
 //流水线CPU各模块
     // IF段流水线取指令单元
     IUnit206 IUnit(
@@ -306,6 +308,7 @@ module PipeLine_CPU(
         //转发信号输入
         .ALUSrcA_ByPassing      (ALUSrcA_ByPassing),
         .ALUSrcB_ByPassing      (ALUSrcB_ByPassing),
+        .busBSrc_ByPassing      (busBSrc_ByPassing),
 
         .Ex_Mem_ByPassing_A     (ALU_ans_Mem),
         .Mem_Wr_ByPassing_A     (busW),
@@ -362,6 +365,7 @@ module PipeLine_CPU(
 
     // Mem 段单元
     MemUnit_206 MemUnit(
+        .clk                    (clk),
         //数据信号输入
         .ALU_ans_Mem            (ALU_ans_Mem),    
         .busB_Mem               (busB_Mem),
@@ -438,9 +442,11 @@ module PipeLine_CPU(
         .RegWr_Ex_Mem           (RegWr_Mem),
         .RegWr_Mem_Wr           (RegWr_Wr),
         .ALUSrc_ID_Ex           (ALUSrc_Ex),
+        .MemWr_ID_EX            (MemWr_Ex),
 
         .ALU_Src_A              (ALUSrcA_ByPassing),
-        .ALU_Src_B              (ALUSrcB_ByPassing)
+        .ALU_Src_B              (ALUSrcB_ByPassing),
+        .busBSrc                (busBSrc_ByPassing)
     );
 
 

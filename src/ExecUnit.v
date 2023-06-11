@@ -33,7 +33,8 @@ module Exec_Unit_206(
 
     //转发控制(旁路)
     input[2-1:0]        ALUSrcA_ByPassing,  //转发控制信号（A端口）
-    input[2-1:0]        ALUSrcB_ByPassing,  //转发控制信号（B端口）    
+    input[2-1:0]        ALUSrcB_ByPassing,  //转发控制信号（B端口） 
+    input[2-1:0]        busBSrc_ByPassing,  //转发控制信号（Load数据 B总线）   
     
     //转发数据输入(旁路)
     input[32-1:0]       Ex_Mem_ByPassing_A,   //Ex/Mem段寄存器的转发数据        
@@ -57,7 +58,6 @@ module Exec_Unit_206(
     wire[32-1:0]        ALU_input_A;        //ALU输入A
     wire[32-1:0]        ALU_input_B;        //ALU输入B
 
-    assign busB_out_Ex = busB_Ex;
     assign B_Addr_Ex = PC_Addr_Ex + ($signed(imm_16_Ext) <<< 2);
     assign J_Addr_out_Ex = J_Addr_Ex;
     assign Reg_Target_Ex = RegDst_Ex ? Rd_Ex : Rt_Ex;
@@ -99,5 +99,14 @@ module Exec_Unit_206(
         .Y                  (ALU_input_A)
     );
 
-endmodule
+    //busB 端输出数据选择器
+    MUX_4_206 MUX_busB(
+        .A                  (Mem_Wr_ByPassing_B),
+        .B                  (Ex_Mem_ByPassing_A),
+        .C                  (),
+        .D                  (busB_Ex),
+        .S                  (busBSrc_ByPassing),
+        .Y                  (busB_out_Ex)
+    );
 
+endmodule

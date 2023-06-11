@@ -7,20 +7,22 @@ module Forwording_Unit_206(
 
     input               RegWr_Ex_Mem,           // Ex/Mem 段寄存器写寄存器控制信号
     input               RegWr_Mem_Wr,           // Mem_Wr 段寄存器写寄存器控制信号 
+    input               MemWr_ID_EX,            
     input               ALUSrc_ID_Ex,           // ID_Ex 段寄存器ALUSrc信号
 
-    output reg[2-1:0]   ALU_Src_A,              //ALU A端数据来源
-    output reg[2-1:0]   ALU_Src_B               //ALU B端数据来源    
+    output reg[2-1:0]   ALU_Src_A,              //  ALU A端数据来源
+    output reg[2-1:0]   ALU_Src_B,              //  ALU B端数据来源    
+    output reg[2-1:0]   busBSrc                 //  busB数据来源（针对load为后续的数据冒险）
 );
 
     always @(*) begin
     //此处判断数据转发给ALU A端
         // C1（A） 优先判断相邻两条指令的依赖情况
-        if(RegTarget_EX_Mem === Rs_ID_EX && RegWr_Ex_Mem && RegTarget_EX_Mem !== 5'd0) begin
+        if(RegTarget_EX_Mem === Rs_ID_EX && RegWr_Ex_Mem && RegTarget_EX_Mem !== 5'd0 ) begin
             ALU_Src_A <= 2'b10;
         end
         // C2（A） C3（A） 判断隔一条指令的依赖情况
-        else if(RegTarget_Mem_Wr === Rs_ID_EX && RegWr_Mem_Wr && RegTarget_Mem_Wr !== 5'd0) begin
+        else if(RegTarget_Mem_Wr === Rs_ID_EX && RegWr_Mem_Wr && RegTarget_Mem_Wr !== 5'd0 ) begin
             ALU_Src_A <= 2'b11;            
         end
         // 无需转发
@@ -32,18 +34,33 @@ module Forwording_Unit_206(
         // imm16（B） 优先判断立即数
         if(ALUSrc_ID_Ex === 1'b1) begin
             ALU_Src_B <= 2'b01;
+
         end    
         // C1（B） 优先判断相邻两条指令的依赖情况
-        else if(RegTarget_EX_Mem === Rt_ID_EX && RegWr_Ex_Mem && RegTarget_EX_Mem !== 5'd0) begin
+        else if(RegTarget_EX_Mem === Rt_ID_EX && RegWr_Ex_Mem && RegTarget_EX_Mem !== 5'd0 ) begin
             ALU_Src_B <= 2'b10;
         end
         // C2（B） C3（B） 判断隔一条指令的依赖情况
-        else if(RegTarget_Mem_Wr === Rt_ID_EX && RegWr_Mem_Wr && RegTarget_Mem_Wr !== 5'd0) begin
+        else if(RegTarget_Mem_Wr === Rt_ID_EX && RegWr_Mem_Wr && RegTarget_Mem_Wr !== 5'd0 ) begin
             ALU_Src_B <= 2'b11;
         end
         //无需转发
         else begin
             ALU_Src_B <= 2'b00;
+        end
+
+    //此处判断数据转发busB 输出（针对后续为load的数据冒险，后续为load busB输出会被立即数覆盖的情况）
+        // C1（B） 优先判断相邻两条指令的依赖情况
+        if(RegTarget_EX_Mem === Rt_ID_EX && RegTarget_EX_Mem !== 5'd0 ) begin
+            busBSrc <= 2'b10;
+        end
+        // C2（B） C3（B） 判断隔一条指令的依赖情况
+        else if(RegTarget_Mem_Wr === Rt_ID_EX && RegTarget_Mem_Wr !== 5'd0 ) begin
+            busBSrc <= 2'b11;
+        end
+        //无需转发
+        else begin
+            busBSrc <= 2'b00;
         end
 
     end

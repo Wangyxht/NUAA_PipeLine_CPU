@@ -29,6 +29,7 @@ module IUnit206(
     PC206 PC(
         .clk            (clk),
         .rst            (rst),
+        .stall          (1'b0),
         .I_Addr         (PC_out),
         .Next_I_Addr    (PCSrc_MUX_out)
     );

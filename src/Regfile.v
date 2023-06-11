@@ -1,3 +1,4 @@
+`timescale  1ns / 1ps    
 module Regfile206(
     input               clk,        //时钟信号
     input[5-1:0]        Rw,         //写入地址
@@ -13,11 +14,13 @@ module Regfile206(
 
 
     always @(negedge clk) begin
+        #1;
         busA <= Register[Ra];
         busB <= Register[Rb];
     end
 
     always @(posedge clk) begin
+        #1;
         if(WrEn == 1)begin
             if(Jal == 1)begin
                 Register[5'd31] <= busW;
