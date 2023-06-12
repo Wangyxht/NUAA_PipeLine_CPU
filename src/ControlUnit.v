@@ -349,7 +349,7 @@ module Control_Unit206(
                 6'b001000://Jr
                 begin
                     Branch   = 0;
-                    Jump     = 0;
+                    Jump     = 1;
                     RegDst   = 1;
                     ALUSrc   = 0;
                     ALUCtr   = 5'b11111;

@@ -11,8 +11,7 @@ module WrUnit_206(
     input               Jal_Wr,
       
     //数据信号输出
-    output[32-1:0]       busW_Wr
-);
+    output[32-1:0]       busW_Wr);
 
     wire[32-1:0]        MUX_1_data;
 
@@ -24,7 +23,7 @@ module WrUnit_206(
     );
 
     MUX206 MUX_data_PCAddr(
-        .A          (PC_Addr_Wr),
+        .A          (PC_Addr_Wr + 32'd4),
         .B          (MUX_1_data),
         .S          (Jal_Wr || Rtype_L_Wr),
         .Y          (busW_Wr)        

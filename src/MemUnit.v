@@ -1,12 +1,17 @@
 `include "DataMemory.v"
 `include "MUX.v"
+`include "BranchCtrUnit.v"
+
 module MemUnit_206(
     input               clk,
     //数据信号输入
     input[32-1:0]       ALU_ans_Mem,            //
+    input[32-1:0]       PC_Addr_Mem,            //
+    input[32-1:0]       J_Addr_Mem,
     input[32-1:0]       busB_Mem,               //
     input[6-1:0]        OP_Mem,                 //
     input[5-1:0]        Reg_Target_Mem,         //
+    input[5-1:0]        Rt_Mem,
     input               ZF_Mem,                 //
     input               OF_Mem,                 //
     input               Sign_Mem,               //
@@ -25,7 +30,10 @@ module MemUnit_206(
     //数据信号输出
     output[32-1:0]      ALU_ans_out_Mem,        //
     output[5-1:0]       Reg_Target_out_Mem,     //
-    output[32-1:0]      Mem_Data_out            //
+    output[32-1:0]      Mem_Data_out,           //
+    output[32-1:0]      J_Addr_out_Mem,         //
+
+    output              BranchCtr_Mem           //
 
 );
 
@@ -35,6 +43,7 @@ module MemUnit_206(
 
     assign ALU_ans_out_Mem = ALU_ans_Mem;
     assign Reg_Target_out_Mem = Reg_Target_Mem;
+    assign J_Addr_out_Mem = Rtype_J_Mem ? ALU_ans_Mem : J_Addr_Mem;
 
     DM_4K_206 DM_4K(
         .clk            (clk),                  //
@@ -60,5 +69,16 @@ module MemUnit_206(
         .Y              (Mem_Data_out)
     ); 
 
+
+    Branch_Control_Unit_206 Branch_Control_Unit(
+        .Branch         (Branch_Mem),
+        .Zero           (ZF_Mem),
+        .Sign           (Sign_Mem),
+        .OverFlow       (OF_Mem),
+        .OP             (OP_Mem),
+        .BranchFlag     (Rt_Mem),
+
+        .BranchCtr       (BranchCtr_Mem)
+    );
 
 endmodule

@@ -34,21 +34,22 @@ module IDUnit_206(
     output[5-1:0]       Rs_out_ID,
 
     //输出控制信号
-    output              Branch_ID,
-    output              Jump_ID,
-    output              RegDst_ID,
-    output              ALUSrc_ID,
-    output[5-1:0]       ALUCtr_ID,
-    output              MemToReg_ID,
-    output              RegWr_ID,
-    output              MemWr_ID,
-    output[2-1:0]       ExtOp_ID,
-    output              Rtype_ID,
-    output              Jal_ID,
-    output              Rtype_J_ID,
-    output              Rtype_L_ID,
-    output              WrByte_ID,
-    output[2-1:0]       LoadByte_ID
+    output              Branch_ID,                  
+    output              BranchCtr_ID,                   
+    output              Jump_ID,                    
+    output              RegDst_ID,                  
+    output              ALUSrc_ID,                  
+    output[5-1:0]       ALUCtr_ID,                  
+    output              MemToReg_ID,                    
+    output              RegWr_ID,                   
+    output              MemWr_ID,                   
+    output[2-1:0]       ExtOp_ID,                   
+    output              Rtype_ID,                   
+    output              Jal_ID,                 
+    output              Rtype_J_ID,                 
+    output              Rtype_L_ID,                 
+    output              WrByte_ID,                  
+    output[2-1:0]       LoadByte_ID                 
     );
     
     assign PC_Addr_out_ID = PC_Addr_ID;

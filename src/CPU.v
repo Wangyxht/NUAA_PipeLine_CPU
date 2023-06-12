@@ -8,6 +8,7 @@
 `include "Mem_Wr.v"
 `include "WrUnit.v"
 `include "ForwardingUnit.v"
+`include "BranchPredictUnit.v"
 
 //流水线CPU模块
 module PipeLine_CPU(
@@ -18,6 +19,8 @@ module PipeLine_CPU(
 //IF段信号
     wire[32-1:0]    Instruction_IF;    //IF段指令输出
     wire[32-1:0]    PC_Addr_IF;        //IF段PC值输出
+    wire[32-1:0]    B_Addr_IF;         //IF段Branch地址运算
+    wire[32-1:0]    B_J_Addr_PC;       //跳转或分支地址输入
 
 //ID段信号
     // ID段数据信号
@@ -36,7 +39,7 @@ module PipeLine_CPU(
     wire[5-1:0]     Rs_out_ID;
 
     // ID段控制信号
-    wire            Branch_ID;          
+    wire            Branch_ID;         
     wire            Jump_ID;            
     wire            RegDst_ID;          
     wire            ALUSrc_ID;          
@@ -95,8 +98,11 @@ module PipeLine_CPU(
     wire[32-1:0]       ALU_ans_Mem;   
     wire[32-1:0]       busB_Mem;   
     wire[32-1:0]       PC_Addr_Mem; 
+    wire[32-1:0]       B_Addr_Mem;
+    wire[32-1:0]       J_Addr_Mem; 
     wire[6-1:0]        OP_Mem;        
     wire[5-1:0]        Reg_Target_Mem;
+    wire[5-1:0]        Rt_Mem; 
     wire               ZF_Mem;        
     wire               OF_Mem;        
     wire               Sign_Mem; 
@@ -105,7 +111,8 @@ module PipeLine_CPU(
     wire[32-1:0]       Mem_Data_out_Mem; 
 
     //Mem段控制信号
-    wire               Branch_Mem;  
+    wire               Branch_Mem;
+    wire               Jump_Mem;  
     wire               MemToReg_Mem;
     wire               RegWr_Mem;   
     wire               MemWr_Mem;   
@@ -120,6 +127,7 @@ module PipeLine_CPU(
     wire[32-1:0]        ALU_ans_Wr;
     wire[32-1:0]        Mem_Data_Wr;
     wire[32-1:0]        PC_Addr_Wr;
+    wire[32-1:0]        J_Addr_out_Mem;
     wire[32-1:0]        busW;
     wire[5-1:0]         Reg_Target_Wr;
 
@@ -130,30 +138,51 @@ module PipeLine_CPU(
     wire                Jal_Wr;
 
 //转发数据与控制信号
-    wire[2-1:0]     ALUSrcA_ByPassing;  //转发控制信号（A端口）
-    wire[2-1:0]     ALUSrcB_ByPassing;  //转发控制信号（B端口）   
-    wire[2-1:0]     busBSrc_ByPassing;  //转发控制信号（busB端口）
+    wire[2-1:0]         ALUSrcA_ByPassing;  //转发控制信号（A端口）
+    wire[2-1:0]         ALUSrcB_ByPassing;  //转发控制信号（B端口）   
+    wire[2-1:0]         busBSrc_ByPassing;  //转发控制信号（busB端口）
+
+// 分支指令预测信号
+    wire                BranchCtr_ID;
+    wire                BranchCtr_Mem;
+    wire                BranchPredict_IF;
+    wire                BranchPredict_ID;
+    wire                BranchPredict_Ex;
+    wire                BranchPredict_Mem;
+    wire[32-1:0]        B_Amendment_Addr;
+    wire                BranchPredict_fault;     
+
+// 中间变量
+    wire[32-1:0]        B_J_Addr;
+    wire                flush;
+
+    assign flush = BranchPredict_fault || Jump_Mem || Rtype_J_Mem;
 
 //流水线CPU各模块
     // IF段流水线取指令单元
     IUnit206 IUnit(
         .clk                    (clk),
         .rst                    (rst),
-        .PC_Src                 (1'b0),
+        .PC_Src                 (BranchPredict_fault || Jump_Mem || BranchPredict_IF),
+        .Target_PC_Addr         (B_J_Addr_PC[32-1:2]),
         .PC_Addr                (PC_Addr_IF),
-        .Instruction            (Instruction_IF)
+        .Instruction            (Instruction_IF),
+        .B_Addr_IF              (B_Addr_IF)
     );
 
     // IF - ID 段寄存器
     IF_ID_206 IF_ID(
+        
         .clk                    (clk),
-        .stall                  (1'b0),
+        .flush                  (flush),
         //数据输入
         .Instruction_IF         (Instruction_IF),
         .PC_Addr_IF             (PC_Addr_IF),
+        .BranchPredict_IF       (BranchPredict_IF),
         //数据输出
         .Instruction_ID         (Instruction_ID),
-        .PC_Addr_ID             (PC_Addr_ID)
+        .PC_Addr_ID             (PC_Addr_ID),
+        .BranchPredict_ID       (BranchPredict_ID)
     );
 
     // Reg/Dec(ID)段单元
@@ -187,6 +216,7 @@ module PipeLine_CPU(
 
         //控制信号输出
         .Branch_ID              (Branch_ID),
+        .BranchCtr_ID           (BranchCtr_ID),
         .Jump_ID                (Jump_ID),
         .RegDst_ID              (RegDst_ID),
         .ALUSrc_ID              (ALUSrc_ID),
@@ -206,7 +236,7 @@ module PipeLine_CPU(
     // ID - Ex 段寄存器
     ID_EX_206 ID_EX(
         .clk                    (clk),
-        .stall                  (1'b0),
+        .flush                  (flush),
         //数据信号输入
         .busA_ID                (busA_ID),
         .busB_ID                (busB_ID),
@@ -221,6 +251,7 @@ module PipeLine_CPU(
 
         //控制信号输入
         .Branch_ID              (Branch_ID),
+        .BranchPredict_ID       (BranchPredict_ID),
         .Jump_ID                (Jump_ID),
         .RegDst_ID              (RegDst_ID),
         .ALUSrc_ID              (ALUSrc_ID),
@@ -250,6 +281,7 @@ module PipeLine_CPU(
 
         //控制信号输出
         .Branch_Ex              (Branch_Ex),
+        .BranchPredict_Ex       (BranchPredict_Ex),
         .Jump_Ex                (Jump_Ex),
         .RegDst_Ex              (RegDst_Ex),
         .ALUSrc_Ex              (ALUSrc_Ex),
@@ -319,19 +351,24 @@ module PipeLine_CPU(
     // Ex - Mem 段寄存器
     Ex_Mem_206 Ex_Mem(
         .clk                    (clk),
-
+        .flush                  (flush),
         //数据信号输入
         .ALU_ans_Ex             (ALU_ans_Ex),
+        .B_Addr_Ex              (B_Addr_Ex),
+        .J_Addr_Ex              (J_Addr_Ex),
         .busB_Ex                (busB_out_Ex),
         .PC_Addr_Ex             (PC_Addr_out_Ex),
         .OP_Ex                  (OP_out_Ex),
         .Reg_Target_Ex          (Reg_Target_Ex),
+        .Rt_Ex                  (Rt_Ex),
         .ZF_Ex                  (ZF_Ex),
         .OF_Ex                  (OF_Ex),
         .Sign_Ex                (Sign_Ex),
 
         //控制信号输入
         .Branch_Ex              (Branch_Ex),
+        .BranchPredict_Ex       (BranchPredict_Ex),
+        .Jump_Ex                (Jump_Ex),
         .MemToReg_Ex            (MemToReg_Ex),
         .RegWr_Ex               (RegWr_Ex),
         .MemWr_Ex               (MemWr_Ex),
@@ -345,14 +382,19 @@ module PipeLine_CPU(
         .ALU_ans_Mem            (ALU_ans_Mem),
         .busB_Mem               (busB_Mem),
         .PC_Addr_Mem            (PC_Addr_Mem),
+        .B_Addr_Mem             (B_Addr_Mem),
+        .J_Addr_Mem             (J_Addr_Mem),
         .OP_Mem                 (OP_Mem),
         .Reg_Target_Mem         (Reg_Target_Mem),
+        .Rt_Mem                 (Rt_Mem),
         .ZF_Mem                 (ZF_Mem),
         .OF_Mem                 (OF_Mem),
         .Sign_Mem               (Sign_Mem),
 
         //控制信号输出
         .Branch_Mem             (Branch_Mem),
+        .BranchPredict_Mem      (BranchPredict_Mem),
+        .Jump_Mem               (Jump_Mem),
         .MemToReg_Mem           (MemToReg_Mem),
         .RegWr_Mem              (RegWr_Mem),
         .MemWr_Mem              (MemWr_Mem),
@@ -367,10 +409,13 @@ module PipeLine_CPU(
     MemUnit_206 MemUnit(
         .clk                    (clk),
         //数据信号输入
-        .ALU_ans_Mem            (ALU_ans_Mem),    
+        .ALU_ans_Mem            (ALU_ans_Mem), 
+        .PC_Addr_Mem            (PC_Addr_Mem), 
+        .J_Addr_Mem             (J_Addr_Mem),  
         .busB_Mem               (busB_Mem),
         .OP_Mem                 (OP_Mem),
         .Reg_Target_Mem         (Reg_Target_Mem),
+        .Rt_Mem                 (Rt_Mem),
         .ZF_Mem                 (ZF_Mem),
         .OF_Mem                 (OF_Mem),
         .Sign_Mem               (Sign_Mem),
@@ -389,7 +434,9 @@ module PipeLine_CPU(
         //数据信号输出
         .ALU_ans_out_Mem        (ALU_ans_out_Mem),
         .Reg_Target_out_Mem     (Reg_Target_out_Mem),
-        .Mem_Data_out           (Mem_Data_out_Mem)
+        .J_Addr_out_Mem         (J_Addr_out_Mem),
+        .Mem_Data_out           (Mem_Data_out_Mem),
+        .BranchCtr_Mem          (BranchCtr_Mem)
     );
 
     // Mem - Wr 段寄存器
@@ -397,6 +444,7 @@ module PipeLine_CPU(
         .clk                    (clk),
         //数据信号输入
         .ALU_ans_Mem            (ALU_ans_out_Mem),
+        .PC_Addr_Mem            (PC_Addr_Mem),
         .Mem_Data_Mem           (Mem_Data_out_Mem),
         .Reg_Target_Mem         (Reg_Target_out_Mem),
 
@@ -420,7 +468,7 @@ module PipeLine_CPU(
     );
 
     //Wr 段单元
-    WrUnit_206 WrUint(
+    WrUnit_206 WrUnit(
         .ALU_ans_Wr             (ALU_ans_Wr),
         .Mem_Data_Wr            (Mem_Data_Wr),
         .PC_Addr_Wr             (PC_Addr_Wr),
@@ -449,6 +497,43 @@ module PipeLine_CPU(
         .busBSrc                (busBSrc_ByPassing)
     );
 
+    // 分支预测检测单元
+    BranchPredictUnit_206 BranchPredict_Unit(
+        .clk                    (clk),
 
+        //分支控制单元输入信号
+        .BranchCtr_Mem          (BranchCtr_Mem),
+        .BranchPredict_Mem      (BranchPredict_Mem),
+        .PC_Addr_IF             (PC_Addr_IF),
+        .PC_Addr_Mem            (PC_Addr_Mem),
+        
+        //分支预测单元输出控制信号
+        .BranchPredict_IF       (BranchPredict_IF),
+        .BranchPredict_fault    (BranchPredict_fault)        
+    );
+
+    //Branch预测错误修正地址选择信号
+    MUX206 MUX_Branch_Amendment_Addr(
+        .A                      (PC_Addr_Mem + 32'd4),
+        .B                      (B_Addr_Mem),
+        .S                      (BranchPredict_Mem),
+        .Y                      (B_Amendment_Addr)
+    );
+
+    //Branch 预测错误与跳转指令地址选择信号
+    MUX206 MUX_Branch_Amendment_Jump(
+        .A                      (J_Addr_out_Mem),
+        .B                      (B_Amendment_Addr),
+        .S                      (Jump_Mem || Rtype_J_Mem),
+        .Y                      (B_J_Addr)
+    );
+
+   //分支预测与分支预测错误/跳转地址选择信号，优先选择 Mem段的Jump 与 预测错误信号
+    MUX206 MUX_BranchPredict_B_J(
+        .A                      (B_J_Addr),
+        .B                      (B_Addr_IF),
+        .S                      (BranchPredict_fault || Jump_Mem || Rtype_J_Mem),
+        .Y                      (B_J_Addr_PC)
+    );   
 
 endmodule

@@ -1,3 +1,6 @@
+`ifndef EXT_UNIT_V
+`define EXT_UNIT_V
+
 module ExtUnit_NPC_206 (input [16-1:0] in,
                         input ExtOp,
                         output [30-1:0] out);
@@ -66,3 +69,5 @@ module ExtUnit_LB_206 (input [8-1:0] in,
     assign out = out_t;
             
 endmodule
+
+`endif

@@ -44,10 +44,14 @@ always @(negedge clk) begin
     #2;
     $fdisplay(fd,"-------------------------------------------");
     $fdisplay(fd,"[clock %2d↓]:", clk_num++);
-    $fdisplay(fd,"$| PC  | %h |",{u_PipeLine_CPU.IUnit.PC.I_Addr,2'b00});
+    $fdisplay(fd,"$| PC_IF | %h |", {u_PipeLine_CPU.IUnit.PC.I_Addr,2'b00});
+    $fdisplay(fd,"$| PC_ID | %h |", u_PipeLine_CPU.IDUnit.PC_Addr_ID );
+    $fdisplay(fd,"$| PC_Ex | %h |", u_PipeLine_CPU.ExecUnit.PC_Addr_Ex );
+    $fdisplay(fd,"$| PC_Mem| %h |", u_PipeLine_CPU.MemUnit.PC_Addr_Mem );
+    $fdisplay(fd,"$| PC_Wr | %h |", u_PipeLine_CPU.WrUnit.PC_Addr_Wr );
     for(i = 0; i <= 31; ++i)    
     begin
-        $fdisplay(fd,"$|Reg%2d| %h |", i,u_PipeLine_CPU.IDUnit.Regfile.Register[i]);
+        $fdisplay(fd,"$| Reg%2d | %h |", i,u_PipeLine_CPU.IDUnit.Regfile.Register[i]);
     end
 end
 
@@ -55,7 +59,7 @@ initial
 begin
     $dumpfile("CPU_Wave.vcd");
     $dumpvars(4);
-    # (50*PERIOD);
+    # (60*PERIOD);
     $finish;    
 end
 

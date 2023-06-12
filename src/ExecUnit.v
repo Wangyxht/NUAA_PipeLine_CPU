@@ -2,6 +2,7 @@
 `include "ExtUnit.v"
 `include "MUX.v"
 
+
 // Exec段 执行单元
 module Exec_Unit_206(
     //Ex段数据输入
@@ -108,5 +109,6 @@ module Exec_Unit_206(
         .S                  (busBSrc_ByPassing),
         .Y                  (busB_out_Ex)
     );
+
 
 endmodule
