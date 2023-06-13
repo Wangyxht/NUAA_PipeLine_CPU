@@ -9,6 +9,7 @@
 `include "WrUnit.v"
 `include "ForwardingUnit.v"
 `include "BranchPredictUnit.v"
+`include "LoadUseUnit.v"
 
 //流水线CPU模块
 module PipeLine_CPU(
@@ -152,6 +153,9 @@ module PipeLine_CPU(
     wire[32-1:0]        B_Amendment_Addr;
     wire                BranchPredict_fault;     
 
+// Load-Use控制信号
+    wire                Load_Use;
+
 // 中间变量
     wire[32-1:0]        B_J_Addr;
     wire                flush;
@@ -163,8 +167,11 @@ module PipeLine_CPU(
     IUnit206 IUnit(
         .clk                    (clk),
         .rst                    (rst),
+        .stall                  (Load_Use),
+
         .PC_Src                 (BranchPredict_fault || Jump_Mem || BranchPredict_IF),
         .Target_PC_Addr         (B_J_Addr_PC[32-1:2]),
+
         .PC_Addr                (PC_Addr_IF),
         .Instruction            (Instruction_IF),
         .B_Addr_IF              (B_Addr_IF)
@@ -172,9 +179,9 @@ module PipeLine_CPU(
 
     // IF - ID 段寄存器
     IF_ID_206 IF_ID(
-        
         .clk                    (clk),
         .flush                  (flush),
+        .stall                  (Load_Use),
         //数据输入
         .Instruction_IF         (Instruction_IF),
         .PC_Addr_IF             (PC_Addr_IF),
@@ -236,7 +243,8 @@ module PipeLine_CPU(
     // ID - Ex 段寄存器
     ID_EX_206 ID_EX(
         .clk                    (clk),
-        .flush                  (flush),
+        .flush                  (flush || Load_Use),
+        .stall                  (1'b0),
         //数据信号输入
         .busA_ID                (busA_ID),
         .busB_ID                (busB_ID),
@@ -536,4 +544,12 @@ module PipeLine_CPU(
         .Y                      (B_J_Addr_PC)
     );   
 
+    // LoadUse检测单元
+    LoadUseUnit206 LoadUseUnit(
+        .MemToReg_ID_Ex         (MemToReg_Ex),
+        .Rt_ID_EX               (Rt_Ex),        
+        .Rt_IF_ID               (Rt_out_ID),     
+        .Rs_IF_ID               (Rs_out_ID),        
+        .Load_Use               (Load_Use)         
+    );
 endmodule

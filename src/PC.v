@@ -12,7 +12,7 @@ module PC206(
             I_Addr <= Init_Addr[31:2];
         end
         else begin
-            if(!stall) I_Addr <= Next_I_Addr;
+            if(!stall || stall === 1'bX) I_Addr <= Next_I_Addr;
         end
     end
 endmodule

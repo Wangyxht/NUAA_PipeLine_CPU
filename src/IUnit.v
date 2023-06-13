@@ -6,6 +6,8 @@
 module IUnit206(
     input               clk,            //时钟信号
     input               rst,            //重置
+    input               stall,          //阻塞
+
     input               PC_Src,         //PC下地址控制信号
     input[32-1:2]       Target_PC_Addr, //PC分支、跳转目标地址
     
@@ -27,17 +29,17 @@ module IUnit206(
     
     //PC 地址来源数据源选择器
     MUX206 #30 MUX_PCSrc(
-        .A              (Target_PC_Addr),     //任意J/Branch/RTypr-J所计算出的地址
-        .B              (PC_Plus_4),          //PC+4
-        .S              (PC_Src && PC_Src !== 1'bX),   //控制信号
-        .Y              (PCSrc_MUX_out)       //下地址输出
+        .A              (Target_PC_Addr),               //任意J/Branch/RTypr-J所计算出的地址
+        .B              (PC_Plus_4),                    //PC+4
+        .S              (PC_Src && PC_Src !== 1'bX),    //控制信号
+        .Y              (PCSrc_MUX_out)                 //下地址输出
     );
 
     //PC寄存器
     PC206 PC(
         .clk            (clk),
         .rst            (rst),
-        .stall          (1'b0),
+        .stall          (stall),
         .I_Addr         (PC_out),
         .Next_I_Addr    (PCSrc_MUX_out)
     );

@@ -1,7 +1,7 @@
 module ID_EX_206(
     input           clk,                //时钟信号输入
     input           stall,              //阻塞信号输入
-    input           flush,
+    input           flush,              //清空信号输入
 
     //控制信号输入
     input           Branch_ID,
@@ -68,72 +68,74 @@ module ID_EX_206(
 
 
     always @(posedge clk) begin
+        if(!stall || stall === 1'bX)begin
+            if(!flush || flush === 1'bX) begin
+                // 控制信号保存
+                Branch_Ex <= Branch_ID;
+                BranchPredict_Ex <= BranchPredict_ID;
+                Jump_Ex <= Jump_ID;
+                RegDst_Ex <= RegDst_ID;
+                ALUSrc_Ex <= ALUSrc_ID;
+                ALUCtr_Ex <= ALUCtr_ID;
+                MemToReg_Ex <= MemToReg_ID;
+                RegWr_Ex <= RegWr_ID;
+                MemWr_Ex <= MemWr_ID;
+                ExtOp_Ex <= ExtOp_ID;
+                Rtype_Ex <= Rtype_ID;
+                Jal_Ex <= Jal_ID;
+                Rtype_J_Ex <= Rtype_J_ID;
+                Rtype_L_Ex <= Rtype_L_ID;
+                WrByte_Ex <= WrByte_ID;
+                LoadByte_Ex <= LoadByte_ID;
+                shamt_Ex <= shamt_ID;
 
-        if(!flush || flush === 1'bX) begin
-            // 控制信号保存
-            Branch_Ex <= Branch_ID;
-            BranchPredict_Ex <= BranchPredict_ID;
-            Jump_Ex <= Jump_ID;
-            RegDst_Ex <= RegDst_ID;
-            ALUSrc_Ex <= ALUSrc_ID;
-            ALUCtr_Ex <= ALUCtr_ID;
-            MemToReg_Ex <= MemToReg_ID;
-            RegWr_Ex <= RegWr_ID;
-            MemWr_Ex <= MemWr_ID;
-            ExtOp_Ex <= ExtOp_ID;
-            Rtype_Ex <= Rtype_ID;
-            Jal_Ex <= Jal_ID;
-            Rtype_J_Ex <= Rtype_J_ID;
-            Rtype_L_Ex <= Rtype_L_ID;
-            WrByte_Ex <= WrByte_ID;
-            LoadByte_Ex <= LoadByte_ID;
-            shamt_Ex <= shamt_ID;
+                // 数据信号保存
+                busA_Ex <= busA_ID;
+                busB_Ex <= busB_ID;
+                PC_Addr_out_Ex <= PC_Addr_out_ID;
+                J_Addr_Ex <= J_Addr_ID;
+                func_out_Ex <= func_out_ID;
+                OP_out_Ex <= OP_out_ID;
+                imm16_Ex <= imm16_ID;
+                Rd_Ex <= Rd_ID;
+                Rt_Ex <= Rt_ID;
+                Rs_Ex <= Rs_ID;
 
-            // 数据信号保存
-            busA_Ex <= busA_ID;
-            busB_Ex <= busB_ID;
-            PC_Addr_out_Ex <= PC_Addr_out_ID;
-            J_Addr_Ex <= J_Addr_ID;
-            func_out_Ex <= func_out_ID;
-            OP_out_Ex <= OP_out_ID;
-            imm16_Ex <= imm16_ID;
-            Rd_Ex <= Rd_ID;
-            Rt_Ex <= Rt_ID;
-            Rs_Ex <= Rs_ID;
+            end
+            else begin
+                Branch_Ex <= 1'b0;
+                BranchPredict_Ex <= 1'b0;
+                Jump_Ex <= 1'b0;
+                RegDst_Ex <= RegDst_ID;
+                ALUSrc_Ex <= ALUSrc_ID;
+                ALUCtr_Ex <= ALUCtr_ID;
+                MemToReg_Ex <= MemToReg_ID;
+                RegWr_Ex <= 1'b0;
+                MemWr_Ex <= 1'b0;
+                ExtOp_Ex <= ExtOp_ID;
+                Rtype_Ex <= Rtype_ID;
+                Jal_Ex <= 1'b0;
+                Rtype_J_Ex <= 1'b0;
+                Rtype_L_Ex <= 1'b0;
+                WrByte_Ex <= 1'b0;
+                LoadByte_Ex <= 1'b0;
 
+
+                // 数据信号保存
+                busA_Ex <= busA_ID;
+                busB_Ex <= busB_ID;
+                PC_Addr_out_Ex <= 32'bXXXX_XXXX;
+                J_Addr_Ex <= J_Addr_ID;
+                func_out_Ex <= func_out_ID;
+                OP_out_Ex <= OP_out_ID;
+                imm16_Ex <= imm16_ID;
+                shamt_Ex <= shamt_ID;
+                Rd_Ex <= Rd_ID;
+                Rt_Ex <= Rt_ID;
+                Rs_Ex <= Rs_ID;            
+            end
         end
-        else begin
-            Branch_Ex <= 1'b0;
-            BranchPredict_Ex <= 1'b0;
-            Jump_Ex <= 1'b0;
-            RegDst_Ex <= RegDst_ID;
-            ALUSrc_Ex <= ALUSrc_ID;
-            ALUCtr_Ex <= ALUCtr_ID;
-            MemToReg_Ex <= MemToReg_ID;
-            RegWr_Ex <= 1'b0;
-            MemWr_Ex <= 1'b0;
-            ExtOp_Ex <= ExtOp_ID;
-            Rtype_Ex <= Rtype_ID;
-            Jal_Ex <= 1'b0;
-            Rtype_J_Ex <= 1'b0;
-            Rtype_L_Ex <= 1'b0;
-            WrByte_Ex <= 1'b0;
-            LoadByte_Ex <= 1'b0;
 
-
-            // 数据信号保存
-            busA_Ex <= busA_ID;
-            busB_Ex <= busB_ID;
-            PC_Addr_out_Ex <= 32'bXXXX_XXXX;
-            J_Addr_Ex <= J_Addr_ID;
-            func_out_Ex <= func_out_ID;
-            OP_out_Ex <= OP_out_ID;
-            imm16_Ex <= imm16_ID;
-            shamt_Ex <= shamt_ID;
-            Rd_Ex <= Rd_ID;
-            Rt_Ex <= Rt_ID;
-            Rs_Ex <= Rs_ID;            
-        end
     end 
 
 
