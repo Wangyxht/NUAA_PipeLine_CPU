@@ -1,10 +1,21 @@
 # NUAA_PipeLine_CPU
 
  南京航空航天大学计算机组成原理实验——流水线CPU设计
-## 各个段内操作
+## 5级流水线各个段内操作
 
-1. IF段: qu
-2. 
+### 主路
+
+1. IF段:    取指令、分支预测并跳转
+2. ID段:    译码、寄存器取数
+3. Ex段:    ALU计算
+4. MEM段:   内存数据操作、分支预测正确性验证与修正、跳转
+5. Wr段：   寄存器写回
+
+### 支路
+
+1. ForwardingUnit:  转发单元
+2. LoadUseUnit:     LoadUse检测单元
+3. BranchPredictUnit & BranchCtrUni: 跳转控制单元
 
 ## 指令编码与控制信号清单
 
